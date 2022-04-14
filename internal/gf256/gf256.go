@@ -61,15 +61,6 @@ func reducible(p int) bool {
 	return false
 }
 
-// nbit returns the number of significant in p.
-func nbit(p int) uint {
-	n := uint(0)
-	for ; p > 0; p >>= 1 {
-		n++
-	}
-	return n
-}
-
 // polyDiv divides the polynomial p by q and returns the remainder.
 func polyDiv(p, q int) int {
 	np := nbit(p)
@@ -80,6 +71,15 @@ func polyDiv(p, q int) int {
 		}
 	}
 	return p
+}
+
+// nbit returns the number of significant in p.
+func nbit(p int) uint {
+	n := uint(0)
+	for ; p > 0; p >>= 1 {
+		n++
+	}
+	return n
 }
 
 // mul returns the product x*y mod poly, a GF(256) multiplication.
@@ -138,23 +138,6 @@ func (f *Field) Mul(x, y byte) byte {
 	return f.exp[int(f.log[x])+int(f.log[y])]
 }
 
-// An RSEncoder implements Reed-Solomon encoding
-// over a given field using a given number of error correction bytes.
-type RSEncoder struct {
-	f    *Field
-	c    int
-	gen  []byte
-	lgen []byte
-	p    []byte
-}
-
-// NewRSEncoder returns a new Reed-Solomon encoder
-// over the given field and number of error correction bytes.
-func NewRSEncoder(f *Field, c int) *RSEncoder {
-	gen, lgen := f.gen(c)
-	return &RSEncoder{f: f, c: c, gen: gen, lgen: lgen}
-}
-
 func (f *Field) gen(e int) (gen, lgen []byte) {
 	// p = 1
 	p := make([]byte, e+1)
@@ -180,6 +163,28 @@ func (f *Field) gen(e int) (gen, lgen []byte) {
 		}
 	}
 	return p, lp
+}
+
+// An RSEncoder implements Reed-Solomon encoding
+// over a given field using a given number of error correction bytes.
+type RSEncoder struct {
+	f    *Field
+	c    int
+	gen  []byte
+	lgen []byte
+	p    []byte
+}
+
+// NewRSEncoder returns a new Reed-Solomon encoder
+// over the given field and number of error correction bytes.
+func NewRSEncoder(f *Field, c int) *RSEncoder {
+	gen, lgen := f.gen(c)
+	return &RSEncoder{
+		f:    f,
+		c:    c,
+		gen:  gen,
+		lgen: lgen,
+	}
 }
 
 // ECC writes to check the error correcting code bytes
