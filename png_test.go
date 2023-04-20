@@ -5,7 +5,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -14,10 +14,12 @@ func TestPNG(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	pngdat := c.PNG()
 	if true {
-		ioutil.WriteFile("x.png", pngdat, 0666)
+		os.WriteFile("x.png", pngdat, 0o666)
 	}
+
 	m, err := png.Decode(bytes.NewBuffer(pngdat))
 	if err != nil {
 		t.Fatal(err)
@@ -35,7 +37,8 @@ func TestPNG(t *testing.T) {
 			}
 			if gv := gm.At(x, y).(color.Gray).Y; gv != v {
 				t.Errorf("%d,%d = %d, want %d", x, y, gv, v)
-				if nbad++; nbad >= 20 {
+				nbad++
+				if nbad >= 20 {
 					t.Fatalf("too many bad pixels")
 				}
 			}
@@ -46,8 +49,9 @@ func TestPNG(t *testing.T) {
 func BenchmarkPNG(b *testing.B) {
 	c, err := Encode("0123456789012345678901234567890123456789", L)
 	if err != nil {
-		panic(err)
+		b.Fatal(err)
 	}
+
 	var buf []byte
 	for i := 0; i < b.N; i++ {
 		buf = c.PNG()
@@ -58,12 +62,15 @@ func BenchmarkPNG(b *testing.B) {
 func BenchmarkImagePNG(b *testing.B) {
 	c, err := Encode("0123456789012345678901234567890123456789", L)
 	if err != nil {
-		panic(err)
+		b.Fatal(err)
 	}
+
 	var buf bytes.Buffer
 	for i := 0; i < b.N; i++ {
 		buf.Reset()
-		png.Encode(&buf, c.Image())
+		if err := png.Encode(&buf, c.Image()); err != nil {
+			b.Fatal(err)
+		}
 	}
 	b.SetBytes(int64(buf.Len()))
 }

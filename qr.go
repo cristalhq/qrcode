@@ -49,9 +49,12 @@ type Code struct {
 
 // IsBlack returns true if the pixel at (x,y) is black.
 func (c *Code) IsBlack(x, y int) bool {
+	idx := y*c.Stride + x/8
+	mask := byte(1 << uint(7-x&7))
+
 	return 0 <= x && x < c.Size &&
 		0 <= y && y < c.Size &&
-		c.Bitmap[y*c.Stride+x/8]&(1<<uint(7-x&7)) != 0
+		c.Bitmap[idx]&mask != 0
 }
 
 // Image returns an Image displaying the code.
@@ -59,7 +62,7 @@ func (c *Code) Image() image.Image {
 	return &codeImage{c}
 }
 
-// codeImage implements image.Image
+// codeImage implements image.Image.
 type codeImage struct{ *Code }
 
 func (c *codeImage) Bounds() image.Rectangle {
@@ -78,4 +81,7 @@ func (c *codeImage) ColorModel() color.Model {
 	return color.GrayModel
 }
 
-var whiteColor, blackColor color.Color = color.Gray{0xFF}, color.Gray{0x00}
+var (
+	blackColor = color.Gray{Y: 0x00}
+	whiteColor = color.Gray{Y: 0xFF}
+)

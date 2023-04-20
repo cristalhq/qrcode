@@ -18,10 +18,18 @@ const (
 )
 
 func (l Level) String() string {
-	if L <= l && l <= H {
-		return "LMQH"[l : l+1]
+	switch l {
+	case L:
+		return "L"
+	case M:
+		return "M"
+	case Q:
+		return "Q"
+	case H:
+		return "H"
+	default:
+		return strconv.Itoa(int(l))
 	}
-	return strconv.Itoa(int(l))
 }
 
 // A Version represents a QR version.

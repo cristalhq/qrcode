@@ -10,7 +10,7 @@ var f = NewField(0x11d, 2) // x^8 + x^4 + x^3 + x^2 + 1
 
 func TestBasic(t *testing.T) {
 	if f.Exp(0) != 1 || f.Exp(1) != 2 || f.Exp(255) != 1 {
-		panic("bad Exp")
+		t.Fatal("bad Exp")
 	}
 }
 
@@ -110,7 +110,8 @@ func TestGaussJordan(t *testing.T) {
 		for _, row := range m {
 			fmt.Printf("%x", row)
 			out := make([]byte, 2)
-			if rs.ECC(row[:2], out); !bytes.Equal(out, row[2:]) {
+			rs.ECC(row[:2], out)
+			if !bytes.Equal(out, row[2:]) {
 				fmt.Printf(" - want %x", out)
 			}
 			fmt.Printf("\n")
@@ -128,7 +129,7 @@ func TestGen(t *testing.T) {
 }
 
 func TestReducible(t *testing.T) {
-	var count = []int{1, 2, 3, 6, 9, 18, 30, 56, 99, 186} // oeis.org/A1037
+	count := []int{1, 2, 3, 6, 9, 18, 30, 56, 99, 186} // oeis.org/A1037
 	for i, want := range count {
 		n := 0
 		for p := 1 << uint(i+2); p < 1<<uint(i+3); p++ {

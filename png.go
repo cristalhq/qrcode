@@ -137,7 +137,8 @@ func (b *bitWriter) writeCode(c *Code) {
 				if !c.IsBlack(x, y) {
 					z |= 1
 				}
-				if nz++; nz == 8 {
+				nz++
+				if nz == 8 {
 					row[j] = z
 					j++
 					nz = 0
@@ -307,9 +308,10 @@ func (b *bitWriter) repeat1(n, d int) {
 	     8   3  17-24   18   8    513-768   28   13 16385-24576
 	     9   3  25-32   19   8   769-1024   29   13 24577-32768
 	*/
-	if d <= 4 {
+	switch {
+	case d <= 4:
 		b.writeBits(uint32(d-1), 5, true)
-	} else if d <= 32768 {
+	case d <= 32768:
 		nbit := uint(16)
 		for d <= 1<<(nbit-1) {
 			nbit--
@@ -322,7 +324,7 @@ func (b *bitWriter) repeat1(n, d int) {
 		b.writeBits(code, 5, true)
 		// rest of bits follow
 		b.writeBits(v, nbit-2, false)
-	} else {
+	default:
 		panic("qr: invalid repeat distance")
 	}
 }

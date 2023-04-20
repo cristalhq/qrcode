@@ -4,7 +4,6 @@ package coding
 import (
 	"errors"
 	"fmt"
-	"sync"
 )
 
 func Encode(bitmap []byte, text string, level Level) (*Code, error) {
@@ -129,12 +128,6 @@ func (p *Plan) EncodeInto(bitmap []byte, text Encoding) (*Code, error) {
 	return c, nil
 }
 
-var pixPool = sync.Pool{
-	New: func() interface{} {
-		return make([]Pixel, 2500)
-	},
-}
-
 func grid(siz int) [][]Pixel {
 	m := make([][]Pixel, siz)
 	pix := make([]Pixel, siz*siz)
@@ -213,7 +206,7 @@ func (p *Plan) vplan() {
 	m[siz-8][8] = Unused.Pixel() | Black
 }
 
-// fplan adds the format pixels
+// fplan adds the format pixels.
 func (p *Plan) fplan() {
 	// Format pixels.
 	fb := uint32(p.Level^1) << 13 // level: L=01, M=00, Q=11, H=10
