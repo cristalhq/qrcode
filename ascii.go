@@ -25,7 +25,7 @@ func (wr *asciiWriter) encode(code *Code) string {
 			if code.IsBlack(x, y) {
 				c = black
 			}
-			wr.WriteString(c + "  ")
+			wr.WriteString(c + half)
 		}
 		wr.WriteString(white + space + reset + "\n")
 	}
@@ -38,7 +38,7 @@ func (wr *asciiWriter) border(code *Code) {
 	for i := 0; i < 2; i++ {
 		wr.WriteString(white + space)
 		for x := 0; x < code.Size; x++ {
-			fmt.Fprint(wr, "  ")
+			fmt.Fprint(wr, half)
 		}
 		wr.WriteString(space + reset + "\n")
 	}
@@ -46,6 +46,7 @@ func (wr *asciiWriter) border(code *Code) {
 
 const (
 	space = "    "
+	half  = "  "
 	black = "\033[30;40m"
 	white = "\033[30;47m"
 	reset = "\033[0m"
