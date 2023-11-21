@@ -14,7 +14,7 @@ type level struct {
 	check  int
 }
 
-var vtab = []version{
+var vtab = [41]version{
 	{},
 	{100, 100, 26, 0x0, [4]level{{1, 7}, {1, 10}, {1, 13}, {1, 17}}},          // 1
 	{16, 100, 44, 0x0, [4]level{{1, 10}, {1, 16}, {1, 22}, {1, 28}}},          // 2

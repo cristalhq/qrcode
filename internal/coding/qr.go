@@ -169,6 +169,7 @@ func (p *Plan) vplan() {
 		for y := 4; y+5 < siz; {
 			// don't overwrite timing markers
 			if (x < 7 && y < 7) || (x < 7 && y+5 >= siz-7) || (x+5 >= siz-7 && y < 7) {
+				// skip
 			} else {
 				alignBox(m, x, y)
 			}
